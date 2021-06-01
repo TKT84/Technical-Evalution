@@ -46,21 +46,21 @@ public class ModelTrainingRepositoryImpl implements ModelTrainingCustomRepositor
             Criteria precisionCriteria = this.getMetricCriteria("precision",precision, greaterThan, lessThan, isEquals);
             query.addCriteria(precisionCriteria);
         } else {
-            LOGGER.error("metric precision with value = " + precision + " is outside the research parameters");
+            LOGGER.warn("metric precision with value = " + precision + " is outside the research parameters");
         }
 
         if (recall > 0f && recall < 1f) {
             Criteria recallCriteria =  this.getMetricCriteria("recall", recall, greaterThan, lessThan, isEquals);
             query.addCriteria(recallCriteria);
         } else {
-            LOGGER.error("metric recall with value = " + recall + " is outside the research parameters");
+            LOGGER.warn("metric recall with value = " + recall + " is outside the research parameters");
         }
 
         if (fScore > 0f && fScore < 1f) {
             Criteria fScoreCriteria =  this.getMetricCriteria("fScore", fScore, greaterThan, lessThan, isEquals);
             query.addCriteria(fScoreCriteria);
         } else {
-            LOGGER.error("metric fScore with value = " + fScore + " is outside the research parameters");
+            LOGGER.warn("metric fScore with value = " + fScore + " is outside the research parameters");
         }
         return query;
     }
@@ -90,6 +90,6 @@ public class ModelTrainingRepositoryImpl implements ModelTrainingCustomRepositor
     }
 
     private  Criteria getCriteriaIsEqualDate(Object obj) {
-        return Criteria.where("date").gte(obj);
+        return Criteria.where("date").is(obj);
     }
 }
