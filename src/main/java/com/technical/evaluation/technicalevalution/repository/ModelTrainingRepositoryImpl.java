@@ -9,13 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.util.ArrayList;
+import org.springframework.stereotype.Component;
 import java.util.List;
 
+@Component
 public class ModelTrainingRepositoryImpl implements ModelTrainingCustomRepository {
 
-    private MongoTemplate mongoTemplate;
+    private final MongoTemplate mongoTemplate;
     private static final Logger LOGGER = LoggerFactory.getLogger(ModelTrainingCustomRepository.class);
 
     @Autowired
@@ -24,115 +24,72 @@ public class ModelTrainingRepositoryImpl implements ModelTrainingCustomRepositor
     }
 
     @Override
-    public List<ModelTraining> findByModelTraining(DateTime dateTime, float precision, float fScore, float recall, boolean greaterThan, boolean lowerThan, boolean isEquals) {
-
-        List<ModelTraining> trainings = new ArrayList<>();
-
-        if (greaterThan) {
-            trainings = findModelTrainingByDateAndPrecisionAndRecallAndFScoreGreaterThan(dateTime, precision, recall, fScore);
-        }
-
-        if (lowerThan) {
-            trainings = findModelTrainingByDateAndPrecisionAndRecallAndFScoreLowerThan( dateTime, precision, recall, fScore);
-        }
-
-        if(isEquals){
-            trainings = findModelTrainingByDateAndPrecisionAndRecallAndFScore( dateTime, precision, recall, fScore);
-        }
-
-        return trainings;
-    }
-
-    public List<ModelTraining> findModelTrainingByDateAndPrecisionAndRecallAndFScore(DateTime date, float precision, float recall, float fScore){
+    public List<ModelTraining> findByModelTraining(DateTime date, float precision, float recall, float fScore, boolean greaterThan, boolean lessThan, boolean isEquals){
 
         if (date == null) {
             throw new InvalidDataInputException("Invalid data input 'DateTime'");
         }
 
-        Query query = new Query();
-
-        List<Criteria> criteria = new ArrayList<>();
-
-        if(precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("precision").is(precision));
-        } else {
-            LOGGER.error("metric precision with value = " + precision + " is outside the research parameters");
-        }
-
-        if(precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("recall").is(recall));
-        } else {
-            LOGGER.error("metric recall with value = " + recall + " is outside the research parameters");
-        }
-
-        if(fScore > 0f && fScore < 1f) {
-            criteria.add(Criteria.where("precision").is(fScore));
-        } else {
-            LOGGER.error("metric fScore with value = " + fScore + " is outside the research parameters");
-        }
+        Query query = getQuery(date, precision, recall, fScore, greaterThan, lessThan, isEquals);
 
         return mongoTemplate.find(query, ModelTraining.class);
     }
 
-    public List<ModelTraining> findModelTrainingByDateAndPrecisionAndRecallAndFScoreGreaterThan(DateTime date, float precision, float recall, float fScore) {
-
-        if (date == null) {
-            throw new InvalidDataInputException("Invalid data input 'DateTime'");
-        }
+    private Query getQuery(DateTime date, float precision, float recall, float fScore, boolean greaterThan, boolean lessThan, boolean isEquals) {
 
         Query query = new Query();
 
-        List<Criteria> criteria = new ArrayList<>();
+        Criteria dateCriteria = this.getCriteriaIsEqualDate(date);
+        query.addCriteria(dateCriteria);
 
         if (precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("precision").gte(precision));
+            Criteria precisionCriteria = this.getMetricCriteria("precision",precision, greaterThan, lessThan, isEquals);
+            query.addCriteria(precisionCriteria);
         } else {
             LOGGER.error("metric precision with value = " + precision + " is outside the research parameters");
         }
 
-        if (precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("recall").gte(recall));
+        if (recall > 0f && recall < 1f) {
+            Criteria recallCriteria =  this.getMetricCriteria("recall", recall, greaterThan, lessThan, isEquals);
+            query.addCriteria(recallCriteria);
         } else {
             LOGGER.error("metric recall with value = " + recall + " is outside the research parameters");
         }
 
         if (fScore > 0f && fScore < 1f) {
-            criteria.add(Criteria.where("precision").gte(fScore));
+            Criteria fScoreCriteria =  this.getMetricCriteria("fScore", fScore, greaterThan, lessThan, isEquals);
+            query.addCriteria(fScoreCriteria);
         } else {
             LOGGER.error("metric fScore with value = " + fScore + " is outside the research parameters");
         }
-
-        return mongoTemplate.find(query, ModelTraining.class);
+        return query;
     }
 
-    public List<ModelTraining> findModelTrainingByDateAndPrecisionAndRecallAndFScoreLowerThan(DateTime date, float precision, float recall, float fScore){
+    private  Criteria getMetricCriteria (String metricName, float metric, boolean greaterThan, boolean lessThan, boolean isEquals) {
 
-        if (date == null) {
-            throw new InvalidDataInputException("Invalid data input 'DateTime'");
-        }
+        Criteria criteria = new Criteria();
 
-        Query query = new Query();
+        if (metric > 0f && metric < 1f) {
 
-        List<Criteria> criteria = new ArrayList<>();
+            if (greaterThan) {
+                criteria = Criteria.where(metricName).gte(metric);
+            }
 
-        if(precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("precision").lte(precision));
+            if (lessThan) {
+                criteria = Criteria.where(metricName).lte(metric);
+            }
+
+            if (isEquals) {
+                criteria = Criteria.where(metricName).is(metric);
+            }
         } else {
-            LOGGER.error("metric precision with value = " + precision + " is outside the research parameters");
+            LOGGER.error(" metric "+ metricName +" with value = " + metric + " is outside the research parameters");
         }
 
-        if(precision > 0f && precision < 1f) {
-            criteria.add(Criteria.where("recall").lte(recall));
-        } else {
-            LOGGER.error("metric recall with value = " + recall + " is outside the research parameters");
-        }
+        return criteria;
+    }
 
-        if(fScore > 0f && fScore < 1f) {
-            criteria.add(Criteria.where("precision").lte(fScore));
-        } else {
-            LOGGER.error("metric fScore with value = " + fScore + " is outside the research parameters");
-        }
-
-        return mongoTemplate.find(query, ModelTraining.class);
+    private  Criteria getCriteriaIsEqualDate(Object obj) {
+        return Criteria.where("date").gte(obj);
     }
 }
