@@ -5,18 +5,19 @@ import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Document(collection = "modeltraining")
 public class ModelTraining implements Serializable {
 
     private ObjectId id;
     private AiModel aiModel = new AiModel();
-    private DateTime date;
+    private Date date;
     private float precision;
     private float recall;
     private float fScore;
 
-    public ModelTraining(AiModel aiModel, DateTime date, float precision, float recall, float fScore) {
+    public ModelTraining(AiModel aiModel, Date date, float precision, float recall, float fScore) {
         this.aiModel = aiModel;
         this.date = date;
         this.precision = precision;
@@ -27,11 +28,11 @@ public class ModelTraining implements Serializable {
     public ModelTraining() {
     }
 
-    public DateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(DateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

@@ -2,11 +2,13 @@ package com.technical.evaluation.technicalevalution.service.DTO;
 
 import org.joda.time.DateTime;
 
+import java.util.Date;
+
 public class TrainingResultDTO {
 
     private String model;
     private String taskType;
-    private DateTime date;
+    private Date date;
     private float precision;
     private float recall;
     private float fScore;
@@ -14,7 +16,7 @@ public class TrainingResultDTO {
     public TrainingResultDTO() {
     }
 
-    public TrainingResultDTO(String model, String taskType, DateTime date, float precision, float recall, float fScore) {
+    public TrainingResultDTO(String model, String taskType, Date date, float precision, float recall, float fScore) {
         this.model = model;
         this.taskType = taskType;
         this.date = date;
@@ -39,11 +41,11 @@ public class TrainingResultDTO {
         this.taskType = taskType;
     }
 
-    public DateTime getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(DateTime date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 

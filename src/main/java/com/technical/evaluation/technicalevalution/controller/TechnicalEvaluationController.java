@@ -6,7 +6,6 @@ import com.technical.evaluation.technicalevalution.service.DTO.AiModelDTO;
 import com.technical.evaluation.technicalevalution.service.DTO.TrainingResultDTO;
 import com.technical.evaluation.technicalevalution.service.ModelTrainingService;
 import io.swagger.annotations.ApiParam;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,7 +37,10 @@ public class TechnicalEvaluationController {
 
     @GetMapping(value="/trainings")
     public ResponseEntity<List<TrainingResultDTO>> getTrainingResults(
-            @DateTimeFormat(pattern = "dd/MM/yyyy HH:mm:ss.SSS") DateTime dateTime,
+            @RequestParam(name = "startDate")
+            @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS") LocalDateTime startDate,
+            @RequestParam(name = "endDate")
+            @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS") LocalDateTime enDate,
             @ApiParam(value="start precision") Float precision,
             @ApiParam(value="start recall") Float recall,
             @ApiParam(value="start f-score") Float fScore,
@@ -47,7 +49,7 @@ public class TechnicalEvaluationController {
             @ApiParam(value="equals") boolean isEquals
             ){
 
-        List<TrainingResultDTO> trainingResultDTOS = modelTrainingService.getResultList(dateTime, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
+        List<TrainingResultDTO> trainingResultDTOS = modelTrainingService.getResultList(startDate, enDate, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
 
         return new ResponseEntity<>(trainingResultDTOS, HttpStatus.OK);
     }

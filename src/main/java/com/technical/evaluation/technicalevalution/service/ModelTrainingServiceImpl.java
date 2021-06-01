@@ -10,12 +10,11 @@ import com.technical.evaluation.technicalevalution.repository.ModelTrainingRepos
 import com.technical.evaluation.technicalevalution.service.DTO.AiModelDTO;
 import com.technical.evaluation.technicalevalution.service.DTO.TrainingResultDTO;
 import org.bson.types.ObjectId;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -33,6 +32,7 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
         this.aiModelRepository = aiModelRepository;
     }
 
+    @Override
     public void postTraining (TrainingResultDTO trainingResultDTO) {
 
         if(trainingResultDTO == null) {
@@ -53,13 +53,19 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
         modelTrainingRepository.save(modelTraining);
     }
 
-
     @Override
-    public List<TrainingResultDTO> getResultList(DateTime dateTime, Float precision, Float fScore, Float recall, boolean greaterThan, boolean lowerThan, boolean isEquals) {
+    public List<TrainingResultDTO> getResultList(LocalDateTime startDate, LocalDateTime endDate, Float precision, Float fScore, Float recall, boolean greaterThan, boolean lowerThan, boolean isEquals) {
 
-        if (dateTime == null) {
-            LOGGER.error("Missing required parameter dateTime");
-            throw new InvalidDataInputException("Invalid data input.");
+        if (startDate == null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The parameter startDate is null. skipping criterion");
+            }
+        }
+
+        if (endDate == null) {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("The parameter endDate is null. skipping criterion");
+            }
         }
 
         if(precision == null) {
@@ -83,7 +89,7 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
             recall = 0f;
         }
 
-        List<ModelTraining> modelTrainings = modelTrainingRepository.findByModelTraining(dateTime, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
+        List<ModelTraining> modelTrainings = modelTrainingRepository.findByModelTraining(startDate, endDate, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
 
         if (modelTrainings == null) {
             LOGGER.error("the Bean ModelTraining should not be null");
@@ -133,7 +139,7 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
             throw new InvalidDataInputException("Invalid data input.");
         }
 
-        List<AiModel> aiModels = null;
+        List<AiModel> aiModels;
 
         if(model == null || "".equals(model)) {
 
