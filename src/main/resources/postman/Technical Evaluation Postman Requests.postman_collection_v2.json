@@ -1,0 +1,172 @@
+{
+	"info": {
+		"_postman_id": "a2cff1a1-6286-4854-84c5-8a59b8bcb7d4",
+		"name": "Technical Evaluation Postman Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "postModelDataSet",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/model/data/5",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"model",
+						"data",
+						"5"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getModelsByModelName",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/models?modelName=Model-2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"models"
+					],
+					"query": [
+						{
+							"key": "modelName",
+							"value": "Model-2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getModelsByModelNameAndTaskType",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/models?modelName=Model-2&taskType=Segmentation",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"models"
+					],
+					"query": [
+						{
+							"key": "modelName",
+							"value": "Model-2"
+						},
+						{
+							"key": "taskType",
+							"value": "Segmentation"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getModelsByTaskType",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/models?taskType=Segmentation",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"models"
+					],
+					"query": [
+						{
+							"key": "taskType",
+							"value": "Segmentation"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "postTrainingResults",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"model\" : \"Model-9\",\n    \"taskType\" : \"Classification\",\n    \"date\" : \"11-12-21\",\n    \"precision\" : \"0.1\",\n    \"recall\" : \"0.42\",\n    \"fScore\" : \"0.6\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/api/trainings",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trainings"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getTrainingResultsByDateTimeAndPrecisionAndGreaterThan",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/api/trainings?dateTime=11/12/2021 00:09:21.000&precision=0.2&greaterThan=true",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"trainings"
+					],
+					"query": [
+						{
+							"key": "dateTime",
+							"value": "11/12/2021 00:09:21.000"
+						},
+						{
+							"key": "precision",
+							"value": "0.2"
+						},
+						{
+							"key": "greaterThan",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
