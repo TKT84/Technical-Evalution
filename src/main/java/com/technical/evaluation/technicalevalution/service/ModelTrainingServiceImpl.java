@@ -7,6 +7,7 @@ import com.technical.evaluation.technicalevalution.model.AiModel;
 import com.technical.evaluation.technicalevalution.model.ModelTraining;
 import com.technical.evaluation.technicalevalution.repository.AiModelRepository;
 import com.technical.evaluation.technicalevalution.repository.ModelTrainingRepository;
+import com.technical.evaluation.technicalevalution.repository.model.QueryMetric;
 import com.technical.evaluation.technicalevalution.service.DTO.AiModelDTO;
 import com.technical.evaluation.technicalevalution.service.DTO.TrainingResultDTO;
 import org.bson.types.ObjectId;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -54,7 +56,21 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
     }
 
     @Override
-    public List<TrainingResultDTO> getResultList(LocalDateTime startDate, LocalDateTime endDate, Float precision, Float fScore, Float recall, boolean greaterThan, boolean lowerThan, boolean isEquals) {
+    public List<TrainingResultDTO> getResultList(
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            Float precision,
+            Float recall,
+            Float fScore,
+            boolean precisionGreaterThan,
+            boolean precisionLessThan,
+            boolean precisionIsEquals,
+            boolean recallGreaterThan,
+            boolean recallLessThan,
+            boolean recallIsEqual,
+            boolean fScoreGreaterThan,
+            boolean fScoreLessThan,
+            boolean fScoreIsEquals) {
 
         if (startDate == null) {
             if (LOGGER.isDebugEnabled()) {
@@ -89,7 +105,21 @@ public class ModelTrainingServiceImpl implements ModelTrainingService{
             recall = 0f;
         }
 
-        List<ModelTraining> modelTrainings = modelTrainingRepository.findByModelTraining(startDate, endDate, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
+        List<QueryMetric> queryMetrics = modelTrainingConverter.getQueryMetrics(
+                precision,
+                recall,
+                fScore,
+                precisionGreaterThan,
+                precisionLessThan,
+                precisionIsEquals,
+                recallGreaterThan,
+                recallLessThan,
+                recallIsEqual,
+                fScoreGreaterThan,
+                fScoreLessThan,
+                fScoreIsEquals);
+
+        List<ModelTraining> modelTrainings = modelTrainingRepository.findByModelTraining(startDate, endDate, queryMetrics);
 
         if (modelTrainings == null) {
             LOGGER.error("the Bean ModelTraining should not be null");

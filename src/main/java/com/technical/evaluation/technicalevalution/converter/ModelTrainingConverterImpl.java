@@ -2,6 +2,8 @@ package com.technical.evaluation.technicalevalution.converter;
 
 import com.technical.evaluation.technicalevalution.model.AiModel;
 import com.technical.evaluation.technicalevalution.model.ModelTraining;
+import com.technical.evaluation.technicalevalution.repository.model.MetricEnum;
+import com.technical.evaluation.technicalevalution.repository.model.QueryMetric;
 import com.technical.evaluation.technicalevalution.service.DTO.AiModelDTO;
 import com.technical.evaluation.technicalevalution.service.DTO.TrainingResultDTO;
 import org.slf4j.Logger;
@@ -103,5 +105,33 @@ public class ModelTrainingConverterImpl implements ModelTrainingConverter{
         }
 
         return trainingResultDTOS;
+    }
+
+    //FIXME: MOCHE!!!! a revoir!!!!!
+    @Override
+    public List<QueryMetric> getQueryMetrics(Float precision,
+                                             Float recall,
+                                             Float fScore,
+                                             boolean precisionGreaterThan,
+                                             boolean precisionLessThan,
+                                             boolean precisionIsEquals,
+                                             boolean recallGreaterThan,
+                                             boolean recallLessThan,
+                                             boolean recallIsEqual,
+                                             boolean fScoreGreaterThan,
+                                             boolean fScoreLessThan,
+                                             boolean fScoreIsEquals) {
+
+        QueryMetric precisionQueryMetric = new QueryMetric(precision,precisionGreaterThan,precisionLessThan,precisionIsEquals, MetricEnum.PRECISION);
+        QueryMetric recallQueryMetric = new QueryMetric(recall,recallGreaterThan,recallLessThan,recallIsEqual, MetricEnum.RECALL);
+        QueryMetric fScoreQueryMetric = new QueryMetric(fScore,fScoreGreaterThan,fScoreLessThan,fScoreIsEquals, MetricEnum.FSCORE);
+
+        List<QueryMetric> queryMetrics = new ArrayList<>();
+
+        queryMetrics.add(precisionQueryMetric);
+        queryMetrics.add(recallQueryMetric);
+        queryMetrics.add(fScoreQueryMetric);
+
+        return queryMetrics;
     }
 }

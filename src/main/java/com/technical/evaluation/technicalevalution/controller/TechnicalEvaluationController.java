@@ -40,16 +40,36 @@ public class TechnicalEvaluationController {
             @RequestParam(name = "startDate")
             @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS") LocalDateTime startDate,
             @RequestParam(name = "endDate")
-            @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS") LocalDateTime enDate,
+            @DateTimeFormat(pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS") LocalDateTime endDate,
             @ApiParam(value="start precision") Float precision,
             @ApiParam(value="start recall") Float recall,
             @ApiParam(value="start f-score") Float fScore,
-            @ApiParam(value="greater than") boolean greaterThan,
-            @ApiParam(value="lower than") boolean lowerThan,
-            @ApiParam(value="equals") boolean isEquals
+            @ApiParam(value="precision greater than") boolean precisionGreaterThan,
+            @ApiParam(value="precision less than") boolean precisionLessThan,
+            @ApiParam(value="precision equals") boolean precisionIsEquals,
+            @ApiParam(value="recall greater than") boolean recallGreaterThan,
+            @ApiParam(value="recall less than") boolean recallLessThan,
+            @ApiParam(value="recall equals") boolean recallIsEqual,
+            @ApiParam(value="fScore greater than") boolean fScoreGreaterThan,
+            @ApiParam(value="fScore less than") boolean fScoreLessThan,
+            @ApiParam(value="fScore equals") boolean fScoreIsEquals
             ){
 
-        List<TrainingResultDTO> trainingResultDTOS = modelTrainingService.getResultList(startDate, enDate, precision, fScore,  recall, greaterThan, lowerThan, isEquals);
+        List<TrainingResultDTO> trainingResultDTOS = modelTrainingService.getResultList(
+                startDate,
+                endDate,
+                precision,
+                recall,
+                fScore,
+                precisionGreaterThan,
+                precisionLessThan,
+                precisionIsEquals,
+                recallGreaterThan,
+                recallLessThan,
+                recallIsEqual,
+                fScoreGreaterThan,
+                fScoreLessThan,
+                fScoreIsEquals);
 
         return new ResponseEntity<>(trainingResultDTOS, HttpStatus.OK);
     }
